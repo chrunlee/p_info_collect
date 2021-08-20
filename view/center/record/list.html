@@ -1,0 +1,127 @@
+{% extends '../tpl/layout.html'%}
+{% block title%}
+校区管理
+{% endblock %}
+{% block css%}
+<link rel="stylesheet" href="{{site.domain}}/static/css/index/list.css">
+{% endblock %}
+{% block body%}
+<body class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-header layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline ">
+                    <select name="schoolid" >
+                        <option value="">选择校区</option>
+                        {% for item in list%}
+                        <option value="{{item.id}}">{{item.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="layui-inline ">
+                    <input type="hidden" id="start">
+                    <input type="hidden" id="end">
+                    <input type="text" id="test" readonly class="layui-input" style="width:300px;" placeholder="选择时间范围">
+                </div>
+                <div class="layui-inline">
+                    <span class="layui-btn layui-btn-sm layui-btn-normal" filter="search">查询</span>
+                </div>
+                <div class="layui-inline list-btn">
+                    <span class="layui-btn layui-btn-sm" filter="export">导出记录</span>
+                </div>
+            </div>
+        </div>
+        <div class="layui-card-body">
+            <table id="table" lay-filter="table"></table>
+        </div>
+    </div>
+</body>
+{% endblock%}
+{% block js%}
+<script>
+layui.use(['jquery','form','table','laydate','tool','layer'],function(){
+    var form = layui.form,table = layui.table,layer = layui.layer,$ = layui.jquery,tool = layui.tool,laydate = layui.laydate;
+    var events = {
+        search : function(){
+            var schoolid = $('[name="schoolid"]').val();
+            var timestr = $('#test').val();
+            var where  = {schoolid : schoolid}
+            if(timestr){
+                var arr = timestr.split(' - ');
+                var start = arr[0],
+                    end = arr[1];
+                where.start = start;
+                where.end = end;
+            }
+            loadData(where)
+        },
+        export : function(){
+            var schoolid = $('[name="schoolid"]').val();
+            var timestr = $('#test').val();
+            var where  = {schoolid : schoolid}
+            if(timestr){
+                var arr = timestr.split(' - ');
+                var start = arr[0],
+                    end = arr[1];
+                where.start = start;
+                where.end = end;
+            }
+            var ldx = layer.msg('正在导出中...',{shade : 0.3,timeout : 0})
+            $.ajax({
+                url : base+'/center/index/export',
+                data : where,
+                type : 'post',
+                success:function(rs){
+                    layer.close(ldx);
+                    if(rs.success){
+                        window.open(base+rs.filePath)
+                    }else{
+                        layer.msg(rs.msg);
+                    }
+                }
+            })
+        }
+    };
+
+    form.render();
+
+    laydate.render({ 
+        elem: '#test'
+        ,type: 'date'
+        ,range: true
+    });
+
+    function loadData(query){
+        //加载数据
+        table.render({
+            elem : '#table',
+            url : '/center/index/recordList',
+            page : true,
+            where : query,
+            cols : [[
+                // {field : 'id',title : 'ID',width:300},
+                {field : 'nickname' ,title : '用户昵称'},
+                {field : 'schoolname' ,title : '所属校区'},
+                {field : 'name' ,title : '姓名'},
+                {field : 'phone' ,title : '手机号码'},
+                {field : 'idcard' ,title : '身份证号'},
+                {field : 'temp' ,title : '体温'},
+                {field : 'ctime' ,title : '提交时间'},
+                // {field : 'dbfile' ,title : '二维码地址'},
+                // {field : 'tool',tool : true,width:200,title : '操作',templet : function(data){
+                //     return [
+                    
+                //     ].join('');
+                // }}
+            ]]
+
+        });
+    }
+    
+    //事件绑定
+    tool.bindEvents(events);
+    loadData();
+});
+
+</script>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends './tpl/layout.html' %}
+{% block title %}
+{{site.headtitle.value}}
+{% endblock %}
+{% block css%}
+<link rel="stylesheet" href="/static/css/index.css">
+{% endblock %}
+{% block content %}
+
+<div class="wrap">
+  <div class="detail-head">
+    <img src="{{user.headimgurl}}" alt="">
+    <p>{{user.nickname}}提交于 {{form.ctime}}</p>
+  </div>
+  <div class="content">
+    <div class="block">
+      <p class="b-title">所在校区</p>
+      <div class="temp-wrap">
+        <input type="hidden" name="schoolid" value="{{list[0].id}}" />
+        <input type="text" name="schoolname"  class="ipt" value="{{form.schoolname}}" readonly />
+        <div class="temp-unit"></div>
+      </div>
+    </div>
+    <div class="block">
+      <p class="b-title">01&nbsp;&nbsp;你的姓名</p>
+      <div class="content-wrap">
+        <input type="text" name="name" class="ipt" value="{{form.name}}" placeholder="请输入" />
+
+      </div>
+    </div>
+    <div class="block">
+      <p class="b-title">02 你的手机号码</p>
+      <div class="content-wrap">
+        <input type="number" name="phone" value="{{form.phone}}" readonly class="ipt" placeholder="请输入" />
+        <div class="error-tip">
+          请输入有效的手机号码。
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <p class="b-title">03 你的身份证号码</p>
+      <div class="content-wrap">
+        <input type="text" name="idcard" value="{{form.idcard}}" readonly class="ipt" placeholder="请输入" />
+        <div class="error-tip">
+          请输入有效的身份证号码。
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <p class="b-title">04 体温</p>
+      <div class="temp-wrap">
+        <input type="number" name="temp"  class="ipt" value="{{form.temp}}" readonly
+          placeholder="请输入" />
+        <div class="temp-unit">°C</div>
+      </div>
+    </div>
+    <span class="btn" onclick="back()">返回</span>
+    
+  </div>
+
+</div>
+
+
+{% endblock%}
+{% block jsfile %}
+<script>
+function back(){
+  window.history.go(-1);
+}
+</script>
+{% endblock %}

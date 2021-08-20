@@ -1,0 +1,113 @@
+{% extends './tpl/layout.html' %}
+{% block title %}
+{{site.name.value}}
+{% endblock %}
+{% block css%}
+<link rel="stylesheet" href="{{site.domain}}/static/css/index/index.css">
+{% endblock %}
+
+{% block body%}
+<body class="">
+    <div class="index-header">
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item" lay-unselect="" filter="collapse">
+                <a href="javascript:;" title="侧边伸缩">
+                    <i class="layui-icon layui-icon-shrink-right"></i>
+                </a>
+            </li>
+            <!-- <li class="layui-nav-item layui-hide-xs" lay-unselect="">
+                <a href="" target="_blank" title="前台">
+                    <i class="layui-icon layui-icon-website"></i>
+                </a>
+            </li>
+            <li class="layui-nav-item" lay-unselect="">
+                <a href="javascript:;" title="刷新">
+                    <i class="layui-icon layui-icon-refresh-3"></i>
+                </a>
+            </li>
+            <li class="layui-nav-item layui-hide-xs" lay-unselect="">
+                <input type="text" placeholder="搜索..." autocomplete="off" class="layui-input layui-input-search">
+            </li> -->
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item layui-hide-xs" title="点击全屏查看" lay-unselect="" filter="fullScreen">
+                <a href="javascript:;">
+                    <i class="layui-icon layui-icon-screen-full"></i>
+                </a>
+            </li>
+            <li class="layui-nav-item index-info" lay-unselect="">
+                <a href="javascript:;">
+                    <cite>{{user.name}}</cite>
+                    <span class="layui-nav-more"></span></a>
+                <dl class="layui-nav-child">
+                    <!-- <dd><a filter="open" data-href="/info" data-title="资料查看">基本资料</a></dd>
+                    <dd><a >修改密码</a></dd> -->
+                    <hr>
+                    <dd filter="logout"><a>退出</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item layui-hide-xs" lay-unselect="">
+                <a href="javascript:;" layadmin-event="about"><i class="layui-icon layui-icon-more-vertical"></i></a>
+            </li>
+            <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-unselect="">
+                <a href="javascript:;" layadmin-event="more"><i class="layui-icon layui-icon-more-vertical"></i></a>
+            </li>
+        </ul>
+    </div>
+    <div class="index-side layui-side layui-side-menu">
+        <div class="layui-side-scroll">
+            <div class="index-logo">
+                    <img src="{{site.domain}}/static/logo.jpg" style="width:30px;margin-right:20px;" alt="">
+                    {{site.name.value}}
+            </div>
+            <ul class="layui-nav layui-nav-tree" id="sidemenu">
+                <li data-href="/center/index/manage" data-title="系统设置" class="layui-nav-item layui-this" filter="open">
+                    <a href="javascript:;">
+                        <i class="layui-icon layui-icon-set-fill"></i>
+                        <cite>系统设置</cite>
+                    </a>
+                </li>
+                <li data-href="/center/index/schoolList" data-title="校区管理" class="layui-nav-item" filter="open">
+                    <a href="javascript:;">
+                        <i class="layui-icon layui-icon-app"></i>
+                        <cite>校区管理</cite>
+                    </a>
+                </li>
+                <li data-href="/center/index/record" data-title="数据统计" class="layui-nav-item" filter="open">
+                    <a href="javascript:;">
+                        <i class="layui-icon layui-icon-chart-screen"></i>
+                        <cite>数据统计</cite>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+    <div class="index-menu">
+        <div class="layui-icon layui-icon-prev" filter="leftMove"></div>
+        <div class="layui-icon layui-icon-next" filter="rightMove"></div>
+        <div class="layui-icon layui-icon-down">
+            <ul class="layui-nav">
+                <li class="layui-nav-item" lay-unselect="">
+                    <a href="javascript:;"></a>
+                    <dl class="layui-nav-child layui-anim-fadein layui-anim layui-anim-upbit">
+                        <dd filter="closeNow"><a href="javascript:;">关闭当前标签页</a></dd>
+                        <dd filter="closeOther"><a href="javascript:;">关闭其它标签页</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+        <div class="layui-tab" lay-unauto="" lay-allowclose="true">
+            <ul class="layui-tab-title" id="topmenu">
+            </ul>
+        </div>
+    </div>
+    <div class="index-body">
+
+    </div>
+</body>
+{% endblock%}
+
+{% block js%}
+<script type="text/javascript" src="{{site.domain}}/static/js/index/index.js"></script>
+{% endblock%}

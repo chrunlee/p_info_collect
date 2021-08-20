@@ -1,0 +1,42 @@
+{% extends './tpl/layout.html' %}
+{% block title %}
+{{site.headtitle.value}}
+{% endblock %}
+{% block css%}
+<link rel="stylesheet" href="/static/css/index.css">
+{% endblock %}
+{% block content %}
+
+<div class="history-content">
+
+  {% for item in list %}
+  <a href="{{site.domain.value}}/index/history/{{item.id}}" style="display:block;">
+    <div class="history-block" >
+      <div class="history-left">
+        <div class="history-avatar">
+          <img src="{{user.headimgurl}}" alt="">
+        </div>
+        <div class="history-block-content">
+          <p class="history-name">
+            {{user.nickname}}
+          </p>
+          <p class="history-time">提交于{{item.ctime}}</p>
+        </div>
+      </div>
+      <div class="history-right">
+        <span class="right-arrow"></span>
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+
+</div>
+
+{% endblock%}
+{% block jsfile%}
+<script>
+  function toDetail(id){
+    console.log(id);
+  }
+</script>
+{% endblock %}

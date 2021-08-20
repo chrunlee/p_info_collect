@@ -1,0 +1,122 @@
+{% extends '../tpl/layout.html'%}
+{% block title%}
+校区管理
+{% endblock %}
+{% block css%}
+<link rel="stylesheet" href="{{site.domain}}/static/css/index/list.css">
+{% endblock %}
+{% block body%}
+<body class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-header layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline list-btn">
+                    <span class="layui-btn layui-btn-sm" filter="add">新增学校</span>
+                </div>
+            </div>
+        </div>
+        <div class="layui-card-body">
+            <table id="table" lay-filter="table"></table>
+        </div>
+    </div>
+</body>
+{% endblock%}
+{% block js%}
+<script>
+layui.use(['form','table','layer','tool','dao'],function(){
+    var form = layui.form,table = layui.table,layer = layui.layer,tool = layui.tool,dao = layui.dao,layer = layui.layer;
+
+    var events = {
+      add : function(){
+          layer.open({
+            type : 2,
+            title : '新增学校',
+            content : base+'/center/index/schoolAdd',
+            area : ['800px','500px']
+          })
+      },
+        download : function(id){
+            window.open('/center/index/schoolAdd?id='+id);
+        },
+        del : function(id){
+            //点击删除，同时删除源文件。
+            tool.systemSetRefresh({id : id}).then(function(rs){
+                layer.msg(rs.msg);
+            })
+        }
+    };
+
+    form.render();
+
+    //加载数据
+    table.render({
+        elem : '#table',
+        url : '/center/index/schoolData',
+        page : true,
+        cols : [[
+            {field : 'id',title : 'ID',width:300},
+            {field : 'name' ,title : '学校名称'},
+            // {field : 'dbfile' ,title : '二维码地址'},
+            {field : 'tool',tool : true,width:200,title : '操作',templet : function(data){
+                return [
+                '<span class="layui-btn layui-btn-xs layui-btn-warm" lay-event="edit">修改名称</span>',
+                '<span class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除学校</span>',
+                // '<span class="layui-btn layui-btn-xs layui-btn-normal" lay-event="download">下载二维码</span>',
+                // data.status == 0 ? 
+                // '<span class="layui-btn layui-btn-xs layui-btn-default" lay-event="start">开始收集</span>'
+                // :'<span class="layui-btn layui-btn-xs layui-btn-danger" lay-event="pause">暂停收集</span>',
+                ].join('');
+            }}
+        ]]
+
+    });
+
+    table.on('tool(table)',function(obj){
+        var id = obj.data.id;//获得当前行的数据的ID
+        if(obj.event === 'download'){
+            //弹窗进行编辑
+            events.download(id);
+        }else if(obj.event === 'edit'){
+          layer.open({
+            title : '修改信息',
+            type : 2,
+            content : base+'/center/index/shoolEdit?id='+id,
+            area : ['800px','500px']
+          })
+        }else if(obj.event === 'del'){
+            //提交进行删除或确认删除
+            layer.confirm('是否确定删除该学校?',{icon : 3,title : '提示'},function(index){
+                layer.close(index);
+                dao.schoolDelete({id : id}).then(function(rs){
+                    layer.msg(rs.msg);
+                    if(rs.success){
+                        tool.refreshPage();
+                    }
+                })
+            })
+        }else if(obj.event == 'manage'){
+            tool.createNewTab('属性管理['+obj.data.appname+']','/center/systemManage?id='+id);
+        }else if(obj.event == 'start'){
+          dao.updateSchoolStatus({id : id,status : 1}).then(function(rs){
+            top.layer.msg(rs.msg);
+            if(rs.success){
+                tool.refreshPage();
+            }
+          })
+        }else if(obj.event == 'pause'){
+          dao.updateSchoolStatus({id : id,status : 0}).then(function(rs){
+            top.layer.msg(rs.msg);
+            if(rs.success){
+                tool.refreshPage();
+            }
+          })
+        }
+    })
+
+    //事件绑定
+    tool.bindEvents(events);
+
+});
+
+</script>
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends '../tpl/layout.html'%}
+{% block title%}
+用户管理
+{% endblock %}
+{% block css%}
+<link rel="stylesheet" href="{{site.domain}}/static/css/index/list.css">
+<style>
+    .user-block img{
+        width:100px;
+        height:100px;
+        border-radius:50%;
+        display:inline-block;
+    }
+    .user-block>div{
+        margin:10px 30px;
+        background-color:rgba(137, 200, 202, 0.5);
+        border-radius:10px;
+        padding:20px 0px;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+{% block body %}
+
+<body class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-header layui-form">
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="name" class="layui-form-label">姓名检索:</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="name" placeholder="请输入姓名进行模糊查询" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <span class="layui-btn layui-btn-sm layui-btn-warm" filter="search">查询</span>
+                </div>
+                <div class="layui-inline list-btn">
+                    <div class="layui-btn-group">
+                        <button type="button" class="layui-btn layui-btn-sm" filter="changeType" data-type="wechat"><i class="layui-icon layui-icon-login-wechat"></i> 微信</button>
+                        <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" filter="changeType" data-type="github"><i class="iconfont icon-github"></i> github</button>
+                        <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" filter="changeType" data-type="qq"><i class="layui-icon layui-icon-login-qq"></i>QQ</button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div class="layui-card-body">
+            <div class="layui-row layui-col-space10" id="renderContainer"></div>
+            <div class="layui-row" id="page"></div>
+        </div>
+    </div>
+</body>
+{% endblock%}
+{% block js%}
+<script>
+    layui.use(['form', 'table','laypage','jquery', 'tool', 'dao'], function () {
+        var form = layui.form, table = layui.table, layer = layui.layer, tool = layui.tool, dao = layui.dao,$ = layui.jquery,laypage = layui.laypage;
+
+        var events = {
+            changeType: function (data) {
+                if($(this).hasClass('layui-btn-primary')){
+                    $(this).removeClass('layui-btn-primary').siblings().addClass('layui-btn-primary');
+                    loadData(null,{from : data.type});
+                }
+            },
+            search : function(){
+                var name = $('[name="name"]').val();
+                name = $.trim(name);
+                var from = $('[filter="changeType"]:not(.layui-btn-primary)').data('type');
+                loadData(null,{from : from,name : name});
+            }
+        };
+        var currentType = $('[filter="changeType"]:not(.layui-btn-primary)').data('type');
+        
+        function loadData(page,params){
+            page = page ||{page : 1,limit : 12};//默认20个。
+            params = params || {};
+            var queryObj = Object.assign(params,page);
+            dao.userLoad(queryObj).then(function(rs){
+                if(rs.code == 0){
+                    //渲染数据。
+                    renderData(rs.data);
+                    //分页处理
+                    laypage.render({
+                        elem: 'page' //注意，这里的 test1 是 ID，不用加 # 号
+                        ,limits : [12,24,48,96]
+                        ,limit : page.limit
+                        ,curr : rs.curr
+                        ,count: rs.count //数据总数，从服务端得到
+                        ,jump : function(p,first){
+                            console.log(p);
+                            if(!first){
+                                loadData({page : p.curr,limit : p.limit},params);
+                            }
+                        }
+                    });
+                }else{
+                    layer.msg(rs.msg);
+                }
+            })
+        }
+
+        function renderData(list){
+            var $con = $('#renderContainer');
+            if(null == list || list.length == 0){
+                $con.html('<div style="text-align:center;line-height:150px;">没有检索到符合条件的数据</div>');
+                return;
+            }
+            
+            $con.html('');
+            var html = '';
+            list.forEach(function(item){
+                item.createtime = item.createtime ||'***';
+                item.avatar = item.avatar || '/static/images/default-avatar.png';
+                item.name = item.name || '***';
+                html += '<div class="layui-col-md3 user-block"><div><img src="'+(item.avatar)+'" /><p style="font-weight:bold;">'+(item.name)+'</p><p style="color:#999;font-size:14px;">'+(item.id)+'</p><p>'+(item.createtime)+'</p></div></div>';
+            })
+            $con.html(html);
+        }
+        loadData(null,{type : currentType});
+        $('[name="name"]').on('keyup',function(ev){
+            if(ev.keyCode === 13){
+                events.search();
+            }
+        })
+        //事件绑定
+        tool.bindEvents(events);
+
+    });
+
+</script>
+{% endblock %}

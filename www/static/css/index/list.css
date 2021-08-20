@@ -1,0 +1,85 @@
+/**列表页面相关的样式/以及表单等相关**/
+.layui-fluid {
+  padding: 15px;
+}
+.layui-card-header {
+  padding-top: 5px;
+  padding-bottom: 0px;
+  height: auto;
+  position: relative;
+}
+.layui-card-header .layui-form-item {
+  margin-bottom: 0px;
+}
+.layui-card-header .layui-form-label {
+  width: auto;
+  padding: 9px 5px;
+}
+.layui-card-header .layui-inline {
+  margin-right: 0px;
+}
+.layui-card-header .layui-form-label {
+  padding: 5px 5px;
+}
+.layui-card-header .layui-input,
+.layui-card-header .layui-textarea,
+.layui-card-header .layui-select {
+  height: 30px;
+}
+.layui-card-body {
+  padding: 5px 15px;
+}
+/**列表新增按钮组**/
+.list-btn {
+  float: right;
+}
+/**弹窗新增表单或编辑表单**/
+.open-form {
+  padding: 10px 20px 0px 0px;
+}
+/**常用的居中等**/
+.text-center {
+  text-align: center;
+}
+/**===============================业务css=============================**/
+/**子系统属性管理**/
+.manage-block {
+  border-bottom: 2px dashed #25ca92;
+}
+.manage-block .form-tip-title {
+  height: 40px;
+  line-height: 40px;
+  color: #333;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+.manage-block .form-tip {
+  height: 40px;
+  line-height: 40px;
+  color: #999;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+/**邮件模版**/
+.email-left,
+.email-right {
+  width: 49%;
+  box-sizing: border-box;
+  float: left;
+  margin-left: 10px;
+}
+.email-right {
+  padding: 5px;
+  border: 1px dashed #ccc;
+}
+/**登录主题**/
+.theme-block {
+  display: inline-block;
+  width: 20%;
+  margin: 20px 2.4%;
+  float: left;
+}
+.theme-block img {
+  width: 100%;
+  height: 200px;
+}

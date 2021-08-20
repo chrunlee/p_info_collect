@@ -1,0 +1,105 @@
+{% extends '../tpl/layout.html'%}
+{% block title%}
+系统属性管理
+{% endblock %}
+{% block css%}
+<link rel="stylesheet" href="{{site.domain}}/static/css/index/list.css">
+{% endblock %}
+{% block body%}
+<body class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-header layui-form">
+        </div>
+        <div class="layui-card-body">
+            <!--表单-->
+
+            <div class="layui-form">
+                {% for item in list%}
+                <div class="manage-block">
+                    <div class="layui-form-item">
+                        <label for="" class="layui-form-label">属性名称</label>
+                        <div class="layui-block">
+                            <div class="form-tip-title">{{item.name}}-{{item.title}}</div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="" class="layui-form-label">基本描述</label>
+                        <div class="layui-block">
+                            <div class="form-tip">{{item.description}}</div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="" class="layui-form-label">属性值</label>
+                        <div class="layui-input-block">
+                            {% if item.type == '0' %}
+                            <input type="number" name="{{item.name}}" class="layui-input" value="{{item.strval}}">
+                            {% elif item.type == '1' %}
+                            <input type="text" name="{{item.name}}" class="layui-input" value="{{item.strval}}">
+                            {% elif item.type == '2' %}
+                            <textarea name="{{item.name}}" rows="15" class="layui-textarea">{{item.strval}}</textarea>
+                            {% elif item.type == '5' %}
+                            <input type="text" name="{{item.name}}" readonly class="layui-input" value="{{item.strval}}" />
+                            <span class="layui-btn layui-btn-xs upload-btn-img" id="{{item.name}}">选择图片</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="" class="layui-form-label"></label>
+                        <div class="layui-input-block">
+                            <span class="layui-btn layui-btn-xs" filter="update" data-name="{{item.name}}">点击更新属性</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock%}
+{% block js%}
+<script>
+layui.use(['form','jquery','upload','tool','dao'],function(){
+    var form = layui.form,$ = layui.jquery,layer = layui.layer,tool = layui.tool,dao = layui.dao,upload = layui.upload;
+
+    var events = {
+        update : function(data){
+            var name = data.name;
+            console.log(name);
+            var $span = $(this),$div = $span.parents('.manage-block');
+            var $val = $div.find('[name="'+name+'"]'),value = $val.val();
+            dao.systemSetUpdate({name : name,value : value}).then(function(res){
+                layer.msg(res.msg);
+            })
+        }
+        
+    };
+
+    form.render();
+    //事件绑定
+    tool.bindEvents(events);
+    //检查是否存在上传操作处理
+    $('.upload-btn-img').each(function(i,item){
+        var id = $(item).attr('id');
+        (function(tid){
+            var uploadInst = upload.render({
+                elem: '#'+id //绑定元素
+                , url: base + '/center/index/upload/' //上传接口
+                , accept: 'images'
+                ,acceptMime : 'image/*'
+                , done: function (res) {
+                    //上传完毕回调
+                    var $span = $('#'+tid);
+                    var $ipt = $span.parent().find('input[name="'+tid+'"]');
+                    $ipt.val(res.filePath);
+                }
+                , error: function () {
+                    //请求异常回调
+                }
+            });
+        })(id);
+        
+    })
+});
+
+</script>
+{% endblock %}

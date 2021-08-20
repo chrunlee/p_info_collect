@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>消息提醒 | {{site.sitename.value}}</title>
+    <style>
+        html,body{
+            width:100%;height:100%;margin:0px;
+            padding:0px 200px;
+            overflow:hidden;
+            box-sizing:border-box;
+        }
+        .head{
+            height:60px;
+            line-height:60px;
+            font-size:32px;
+        }
+        .head img{width:30px;height:30px;margin-right:20px;}
+        .content{padding:50px 100px;}
+        .left-content,.right-content{float:left;width:50%;}
+        @media screen and (max-width:1366px){
+            html,body{padding:0px 50px;}
+            .content{padding:40px 20px;}
+        }
+        @media screen and (max-width:768px){
+            html,body{padding:0px 10px;}
+            .content{padding:20px 10px;}
+        }
+    </style>
+</head>
+<body>
+    <div class="head">
+        <a href="/" style="color:inherit;text-decoration:none;"><img src="{{site.logo.value}}" alt=""> {{site.sitename.value}}</a>
+    </div>
+    <div class="content">
+        <div class="left-content">
+            <h1>Shoot!</h1>
+            <h4>
+                {{msg}}
+            </h4>
+        </div>
+        <div class="right-content">
+            <img src="{{site.staticfiledomain.value}}/static/images/404.gif" alt="">
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,255 @@
+{% extends './tpl/layout.html' %}
+{% block title %}
+{{site.headtitle.value}}
+{% endblock %}
+{% block css%}
+<link rel="stylesheet" href="/static/css/index.css">
+{% endblock %}
+{% block content %}
+
+<div class="wrap">
+  <div class="head" style="background-image: url({{site.fengmian.value}});">
+    <p class="headtitle pd">{{site.headtitle.value}}</p>
+    <p class="subtitle pd">{{site.subtitle.value}}</p>
+    <div class="count">
+      <span class="counta">{{total}}</span>
+      <span class="countb">份结果</span>
+    </div>
+  </div>
+  <div class="history" onclick="toHistory()">
+    <div class="history-tip">
+      <img src="{{user.headimgurl}}" alt="">
+      <span class="history-tip-content">您已提交10份 | 最后提交与 09/18 23:33</span>
+    </div>
+    <span class="right-arrow"></span>
+  </div>
+  <div class="content">
+    <div class="block">
+      <p class="b-title">所在校区</p>
+      <div class="temp-wrap">
+        <input type="hidden" name="schoolid" value="{{list[0].id}}" />
+        <input type="text" name="schoolname" onClick="showschool()" class="ipt" value="{{list[0].name}}" readonly />
+        <div class="temp-unit"></div>
+      </div>
+    </div>
+    <div class="block">
+      <p class="b-title">01&nbsp;&nbsp;你的姓名</p>
+      <div class="content-wrap">
+        <input type="text" name="name" class="ipt" placeholder="请输入" />
+
+      </div>
+    </div>
+    <div class="block">
+      <p class="b-title">02 你的手机号码</p>
+      <div class="content-wrap">
+        <input type="number" name="phone" onkeyup="checkPhone(this)" class="ipt" placeholder="请输入" />
+        <div class="error-tip">
+          请输入有效的手机号码。
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <p class="b-title">03 你的身份证号码</p>
+      <div class="content-wrap">
+        <input type="text" name="idcard" onkeyup="checkCard(this)" class="ipt" placeholder="请输入" />
+        <div class="error-tip">
+          请输入有效的身份证号码。
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <p class="b-title">04 体温</p>
+      <div class="temp-wrap">
+        <input type="number" name="temp" onClick="ShowTimePicker()" class="ipt" value="36.5" readonly
+          placeholder="请输入" />
+        <div class="temp-unit">°C</div>
+      </div>
+    </div>
+    <span class="btn" onclick="submit()">提交</span>
+    <div class="again-wrap">
+      <div style="again-empty"></div>
+      <div class="again" onclick="onemore()">
+        <span class="again-icon"></span>再填一份
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="loadingToast" style="opacity: 0; display: none;">
+  <div class="weui-mask_transparent"></div>
+  <div class="weui-toast">
+    <span class="weui-primary-loading weui-icon_toast">
+      <span class="weui-primary-loading__dot"></span>
+    </span>
+    <p class="weui-toast__content">加载中</p>
+  </div>
+</div>
+
+<div class="suc-page">
+  <i class="weui-icon-success weui-icon_msg"></i>
+  <p style="font-size:24px;">已提交</p>
+
+  <div class="suc-btn">
+    <div onclick="showdetail()">查看填写详情</div>
+    <span>|</span>
+    <div onclick="again()">再填写一份</div>
+  </div>
+</div>
+
+{% endblock%}
+{% block jsfile %}
+<script type="text/javascript">
+  var base = '{{site.domain.value}}';
+  var list = '{{liststr | safe}}';
+  list = JSON.parse(list);
+  function ShowTimePicker() {
+    var temp = [];
+    var minites = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    if (!temp.length) {
+      for (var i = 30; i < 45; i++) {
+        temp.push({
+          label: i,
+          value: i
+        });
+      }
+    }
+    weui.picker(temp, minites, {
+      defaultValue: [36, 5],
+      onConfirm: function (result) {
+        var a = result[0].value;
+        var b = result[1].value;
+        $('[name="temp"]').val(a + '.' + b);
+      }
+    });
+  }
+  function showschool() {
+    var arr = list.map(function (t) {
+      return {
+        label: t.name,
+        value: t.id
+      }
+    })
+    weui.picker(arr, {
+      defaultValue: [$('[name="schoolid"]').val()],
+      onConfirm: function (result) {
+        var label = result[0].label;
+        var id = result[0].value;
+        $('[name="schoolid"]').val(id);
+        $('[name="schoolname"]').val(label);
+      }
+    });
+  }
+
+  function showdetail(){
+    //置空
+    $('.content').addClass('disabled');
+    $('[name="schoolname"]').prop('disabled',true);
+    $('[name="name"]').prop('disabled',true);
+    $('[name="phone"]').prop('disabled',true);
+    $('[name="idcard"]').prop('disabled',true);
+    $('[name="temp"]').prop('disabled',true);
+    $('.btn').addClass('hide');
+    $('.again-wrap').addClass('active');
+
+    $('.suc-page').removeClass('active');
+    $.ajax({
+      url : base+'/index/getLast',
+      type : 'post',
+      success:function(res){
+        if(res.success){
+          $('.history-tip-content').html('您已经提交'+res.count+'份 | 最后提交于 '+res.last.ctime)
+          $('.counta').html(res.allcount);
+          $('.history').addClass('active');
+        }
+      }
+    })
+  }
+  function onemore(){
+    $('.content').removeClass('disabled');
+    $('[name="schoolname"]').prop('disabled',false);
+    $('[name="name"]').prop('disabled',false);
+    $('[name="phone"]').prop('disabled',false);
+    $('[name="idcard"]').prop('disabled',false);
+    $('[name="temp"]').prop('disabled',false);
+    $('.btn').removeClass('hide');
+    $('.history').removeClass('active');
+    $('.again-wrap').removeClass('active');
+  }
+  function toHistory(){
+    location.href = base+'/index/history';
+  }
+  function checkPhone(dom) {
+    var throu = true;
+    var phone = $(dom).val().trim();
+    if ('' != phone && !/^1(3\d|4[5-9]|5[0-35-9]|6[567]|7[0-8]|8\d|9[0-35-9])\d{8}$/.test(phone)) {
+      //校验phone 
+      throu = false;
+      $(dom).parent().addClass('error');
+    } else {
+      $(dom).parent().removeClass('error');
+    }
+  }
+  function checkCard(dom) {
+    var throu = true;
+    var idcard = $(dom).val().trim();
+    if ('' != idcard && !/^[1-9]\d{5}(18|19|20|(3\d))\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/.test(idcard)) {
+      //校验phone 
+      throu = false;
+      $(dom).parent().addClass('error');
+    } else {
+      $(dom).parent().removeClass('error');
+    }
+  }
+  function again(){
+    location.reload();
+  }
+  //表单提交进行验证
+  function submit() {
+    var throu = true;
+    var name = $('[name="name"]').val().trim();
+    var phone = $('[name="phone"]').val().trim();
+    var idcard = $('[name="idcard"]').val().trim();
+    var temp = $('[name="temp"]').val();
+    //name 不限制
+    if ('' != phone && !/^1(3\d|4[5-9]|5[0-35-9]|6[567]|7[0-8]|8\d|9[0-35-9])\d{8}$/.test(phone)) {
+      //校验phone 
+      throu = false;
+      $('[name="phone"]').parent().addClass('error');
+    }
+    if ('' != idcard && !/^[1-9]\d{5}(18|19|20|(3\d))\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/.test(idcard)) {
+      throu = false;
+      $('[name="idcard"]').parent().addClass('error');
+    }
+    var schoolid = $('[name="schoolid"]').val();
+    if (throu) {
+      weui.confirm('确认提交你的结果吗?', function () {
+        var $loadingToast = $('#loadingToast');
+        if ($loadingToast.css('display') != 'none') return;
+        $loadingToast.fadeIn(100);
+        $.ajax({
+          type :'post',
+          url :base+'/index/saveForm',
+          data : {
+            name : name,
+            phone : phone,
+            idcard : idcard,
+            schoolid : schoolid,
+            temp : temp
+          },
+          success : function(res){
+            $loadingToast.fadeOut(100);
+            if(res.success){
+              $('.suc-page').addClass('active');
+            }
+          }
+        })
+      }, function () {
+      }, {
+        title: ''
+      });
+    }
+  }
+
+</script>
+{% endblock %}

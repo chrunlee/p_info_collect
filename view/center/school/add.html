@@ -1,0 +1,97 @@
+{% extends '../tpl/layout.html'%}
+{% block title%}
+新增学校
+{% endblock %}
+{% block css%}
+<link rel="stylesheet" href="{{site.domain}}/static/css/index/list.css">
+{% endblock %}
+{% block body%}
+
+<body class="open-form">
+  <div class="layui-form" lay-filter="form">
+    <div class="layui-form-item">
+      <label for="name" class="layui-form-label">学校名称</label>
+      <div class="layui-input-block">
+        <input type="hidden" name="id" value="{{form.id}}">
+        <input type="text" name="name" lay-verType="tips" lay-verify="required" placeholder="请输入学校名称，用于展示"
+          autocomplete="off" class="layui-input" value="{{form.name}}">
+      </div>
+    </div>
+    <!-- <div class="layui-form-item">
+      <label for="name" class="layui-form-label">封面图片</label>
+      <div class="layui-input-block">
+        <input type="hidden" name="postimg" value="{{form.postimg}}">
+        <span class="layui-btn layui-btn-sm layui-btn-normal" id="upload">上传封面图片</span>
+        <div class="img-show">
+          {% if form.postimg %}
+          <img src="{{form.postimg}}" style="height:100px;"/>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label for="name" class="layui-form-label">表格标题</label>
+      <div class="layui-input-block">
+        <input type="text" name="headtitle" value="{{form.headtitle}}" lay-verType="tips" lay-verify="required" placeholder="请输入表格标题，用于展示" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label for="name" class="layui-form-label">表格副标题</label>
+      <div class="layui-input-block">
+        <input type="text" name="subtitle" value="{{form.subtitle}}" placeholder="请输入表格标题，用于展示" autocomplete="off" class="layui-input">
+      </div>
+    </div> -->
+
+    <div class="layui-form-item text-center">
+      <span class="layui-btn" lay-submit="" lay-filter="save">保存</span>
+      <span class="layui-btn layui-btn-danger" filter="cancel">取消</span>
+    </div>
+
+  </div>
+</body>
+{% endblock%}
+{% block js%}
+<script>
+  /**DEMO add **/
+  layui.use(['jquery', 'layer', 'upload', 'form', 'tool', 'dao'], function () {
+    //通常来说，每个页面基本上都会用到这几个模块，是否可以考虑把这几个模块都合并下？毕竟请求太多也会影响速度，后续看看
+
+    var form = layui.form, layer = layui.layer, $ = layui.jquery, tool = layui.tool, dao = layui.dao, upload = layui.upload;
+
+    form.render();
+    form.on('submit(save)', function (data) {
+      //通过dao进行提交数据保存并关闭窗口，刷新列表页面
+      dao.schoolSave(data.field).then(function (rs) {
+        tool.refreshParentPage();
+        top.layer.msg(rs.msg);
+        parent.location.reload();
+      })
+    })
+    var uploadInst = upload.render({
+      elem: '#upload' //绑定元素
+      , url: base + '/center/index/upload/' //上传接口
+      , accept: 'images'
+      , done: function (res) {
+        //上传完毕回调
+        console.log(res);
+        $('.img-show').html('<img src="' + res.filePath + '" style="height:100px;"/>')
+        $('[name="postimg"]').val(res.filePath);
+      }
+      , error: function () {
+        //请求异常回调
+      }
+    });
+    tool.bindEvents({
+      preview: function () {
+        var content = $('[name="content"]').val();
+        $('.email-right').html(content);
+      },
+      //关闭当前弹窗
+      cancel: function () {
+        parent.layer.closeAll();
+      }
+    });
+  });
+
+</script>
+{% endblock %}
