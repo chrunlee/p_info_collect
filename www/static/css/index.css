@@ -109,7 +109,6 @@ body{overflow-y:auto;}
 .temp-wrap{
   display:flex;
   flex-direction: row;
-  padding-left:25px;
 }
 .temp-wrap input{
   border-right:none;
@@ -150,6 +149,9 @@ body{overflow-y:auto;}
 }
 .error .error-tip{
   display:block;
+}
+.error .temp-unit{
+  border-color:rgba(228, 68, 68, 0.678);
 }
 .suc-page{
   position: fixed;

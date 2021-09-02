@@ -80,7 +80,6 @@ module.exports = class extends Base {
       return this.json({success:false,msg:'当前登录失效,请重新扫码进行提交'})
     }
     let data = this.post();
-    console.log(data);
     //提交数据
     data.id = think.uuid('v4').toString().replace(/-/g, '');
     data.openid = sysUser.openid;

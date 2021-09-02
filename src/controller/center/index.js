@@ -177,9 +177,9 @@ module.exports = class extends think.Controller {
     }
     //导出记录
     async exportAction () {
-        let schoolid = this.get('schoolid');
-        let start = this.get('start');
-        let end = this.get('end');
+        let schoolid = this.post('schoolid');
+        let start = this.post('start');
+        let end = this.post('end');
         let count = 0, list = [];
         let where = {};
         let hasw = false;
@@ -220,9 +220,9 @@ module.exports = class extends think.Controller {
             }).field('t1.*,t2.name as schoolname,t3.nickname').order('ctime desc').select();
         }
         if (list && list.length > 0) {
-            let data = [['用户昵称', '所属校区', '姓名', '手机号码', '身份证号', '体温', '提交时间']];
+            let data = [['用户昵称', '所属校区', '姓名', '手机号码', '身份证号', '体温','去往部门','提交时间']];
             list.forEach(t => {
-                data.push([t.nickname, t.schoolname, t.name, t.phone, t.idcard, t.temp, t.ctime])
+                data.push([t.nickname, t.schoolname, t.name, t.phone, t.idcard, t.temp,t.dept, t.ctime])
             })
             let buffer = xlsx.build([{ name: 'sheet1', data: data }]);
             let name = (+new Date()) + Math.round(Math.random() * 10000) + '.xlsx';

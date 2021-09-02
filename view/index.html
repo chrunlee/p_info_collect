@@ -59,10 +59,28 @@
     </div>
     <div class="block">
       <p class="b-title">04 体温</p>
-      <div class="temp-wrap">
-        <input type="number" name="temp" onClick="ShowTimePicker()" class="ipt" value="36.5" readonly
+      <div class="content-wrap">
+        <!-- <input type="number" name="temp" onClick="ShowTimePicker()" class="ipt" value="36.5" readonly
+          placeholder="请输入" /> -->
+        <div class="temp-wrap">
+          <input type="number" name="temp" class="ipt" value="" placeholder="请输入" />
+          <div class="temp-unit">°C</div>
+        </div>
+        <div class="error-tip">
+          请输入体温。
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <p class="b-title">05 去往校内部门</p>
+      <div class="content-wrap">
+        <!-- <input type="number" name="temp" onClick="ShowTimePicker()" class="ipt" value="36.5" readonly
+          placeholder="请输入" /> -->
+          <input type="text" name="dept" class="ipt" onkeyup="checkDept(this)" value=""
           placeholder="请输入" />
-        <div class="temp-unit">°C</div>
+          <div class="error-tip">
+            请输入去往校内部门。
+          </div>
       </div>
     </div>
     <span class="btn" onclick="submit()">提交</span>
@@ -201,6 +219,16 @@
       $(dom).parent().removeClass('error');
     }
   }
+  function checkDept(dom){
+    var throu = true;
+    var dept = $(dom).val().trim();
+    if(null != dept && ''!= dept){
+      $(dom).parent().removeClass('error');
+    }else{
+      throu = false;
+      $(dom).parent().addClass('error');
+    }
+  }
   function again(){
     location.reload();
   }
@@ -211,6 +239,7 @@
     var phone = $('[name="phone"]').val().trim();
     var idcard = $('[name="idcard"]').val().trim();
     var temp = $('[name="temp"]').val();
+    var dept = $('[name="dept"]').val().trim();
     //name 不限制
     if ('' != phone && !/^1(3\d|4[5-9]|5[0-35-9]|6[567]|7[0-8]|8\d|9[0-35-9])\d{8}$/.test(phone)) {
       //校验phone 
@@ -221,7 +250,15 @@
       throu = false;
       $('[name="idcard"]').parent().addClass('error');
     }
+    if(null == temp || '' == temp){
+      throu = false;
+      $('[name="temp"]').parent().parent().addClass('error');
+    }
     var schoolid = $('[name="schoolid"]').val();
+    if(null == dept || '' == dept){
+      throu = false;
+      $('[name="dept"]').parent().addClass('error');
+    }
     if (throu) {
       weui.confirm('确认提交你的结果吗?', function () {
         var $loadingToast = $('#loadingToast');
@@ -235,7 +272,8 @@
             phone : phone,
             idcard : idcard,
             schoolid : schoolid,
-            temp : temp
+            temp : temp,
+            dept : dept
           },
           success : function(res){
             $loadingToast.fadeOut(100);
